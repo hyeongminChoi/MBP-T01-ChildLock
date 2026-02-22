@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.2">
+  <diagram name="페이지-1" id="M8kqQAUIuyKu2empRG06">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="POc56uzPYxNh6teTaVo1-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="&lt;div style=&quot;text-align: justify;&quot;&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="590" width="252" x="298" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-1. 차일드 락 설정/해제(운전석 원터치)" vertex="1">
+          <mxGeometry height="60" width="157" x="353" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-2. 내부 도어 개방 요청 처리(내부 손잡이)" vertex="1">
+          <mxGeometry height="60" width="156" x="354" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-3. 외부 도어 개방 요청 처리(외부 손잡이)" vertex="1">
+          <mxGeometry height="60" width="157" x="353" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-4. 상태 표시" vertex="1">
+          <mxGeometry height="60" width="157" x="353" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-5. 이상/고장 경고 표시" vertex="1">
+          <mxGeometry height="60" width="157" x="353" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-6. 충돌/에어백 전개 시 자동 해제(구조 지원)" vertex="1">
+          <mxGeometry height="60" width="157" x="353" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="UC-7. 후측방 위험 시 해제 요청 무시/보류(안전 하차 방지)" vertex="1">
+          <mxGeometry height="60" width="157" x="353" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-21" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="POc56uzPYxNh6teTaVo1-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-22" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="POc56uzPYxNh6teTaVo1-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-11" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="운전자" vertex="1">
+          <mxGeometry height="60" width="30" x="180" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-23" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="POc56uzPYxNh6teTaVo1-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-12" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="뒷자석 승객" vertex="1">
+          <mxGeometry height="60" width="30" x="150" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-24" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="POc56uzPYxNh6teTaVo1-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-13" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="외부 사용자/보호자" vertex="1">
+          <mxGeometry height="60" width="30" x="160" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-14" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="도어 모듈(Door Module)" vertex="1">
+          <mxGeometry height="60" width="30" x="680" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-15" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="표시 장치(HMI/Cluster/LED)" vertex="1">
+          <mxGeometry height="60" width="30" x="710" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-16" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="에어백/충돌 판단 ECU(Airbag/Crash ECU)" vertex="1">
+          <mxGeometry height="60" width="30" x="750" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-17" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="후측방 위험 감지 시스템(RCTA)" vertex="1">
+          <mxGeometry height="60" width="30" x="790" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-18" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="도어락 시스템(Door Lock System)" vertex="1">
+          <mxGeometry height="60" width="30" x="827" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-25" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-26" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-27" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-28" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-30" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-31" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-32" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="POc56uzPYxNh6teTaVo1-33" edge="1" parent="1" source="POc56uzPYxNh6teTaVo1-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" target="POc56uzPYxNh6teTaVo1-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
