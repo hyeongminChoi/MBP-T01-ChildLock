@@ -1,1 +1,61 @@
-aaa
+@startuml
+title UC-6. 충돌/에어백 전개 시 자동 해제(구조 지원)
+
+autonumber
+hide footbox
+
+actor "Rear Passenger" as RearPassenger
+actor "Vehicle Sensors" as VehicleSensors
+
+boundary "Rear Door Interface" as RearDoorIF
+control  "ECLSController" as ECLSController
+boundary "Vehicle State Interface" as VehicleStateIF
+entity   "ChildLockState" as ChildLockState
+boundary "Cluster Interface" as ClusterIF
+
+'========================
+' Trigger: Crash / Airbag
+'========================
+VehicleSensors -> VehicleStateIF : CrashOrAirbagEvent()\n(Collision / AirbagDeployed)
+activate VehicleStateIF
+
+VehicleStateIF -> ECLSController : onCrashOrAirbagEvent()
+activate ECLSController
+deactivate VehicleStateIF
+
+'========================
+' Read current ChildLock state
+'========================
+ECLSController -> ChildLockState : getChildLockAll()
+activate ChildLockState
+ChildLockState --> ECLSController : ON/OFF
+deactivate ChildLockState
+
+'========================
+' Emergency override: auto release
+'========================
+ECLSController -> ChildLockState : setChildLockAll(OFF)
+activate ChildLockState
+ChildLockState --> ECLSController : ACK
+deactivate ChildLockState
+
+ECLSController -> RearDoorIF : AllowInnerOpen(override)
+activate RearDoorIF
+RearDoorIF --> ECLSController : ACK
+deactivate RearDoorIF
+
+ECLSController -> ClusterIF : Display("비상 - 실내 개방 허용")
+activate ClusterIF
+ClusterIF --> ECLSController : displayed
+deactivate ClusterIF
+
+'========================
+' Result: passenger can open
+'========================
+RearPassenger -> RearDoorIF : InnerOpenRequest()
+activate RearDoorIF
+RearDoorIF --> RearPassenger : DoorOpensAllowed
+deactivate RearDoorIF
+
+deactivate ECLSController
+@enduml
