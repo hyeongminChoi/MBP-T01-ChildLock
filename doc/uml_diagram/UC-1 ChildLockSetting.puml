@@ -1,0 +1,40 @@
+@startuml
+title UC-1 Child Lock Setting / Release
+
+actor Driver
+participant "Driver Button Interface" as DBI
+participant "ECLSController" as Controller
+participant "Vehicle State Interface" as VSI
+participant "ChildLockState" as CLS
+participant "Rear Door Interface" as RDI
+participant "Cluster Interface" as CI
+
+== Button Input ==
+Driver -> DBI : ChildLockButtonPressed(command)
+DBI -> Controller : onButtonEvent(command)
+
+== Vehicle State Check ==
+Controller -> VSI : getVehicleState()
+VSI --> Controller : vehicleState
+
+Controller -> CLS : getChildLockState()
+CLS --> Controller : currentState
+
+alt requested == currentState
+    Controller -> CI : Display("차일드락 : ON | OFF")
+    CI --> Controller : displayed
+else rearSideDanger && command == OFF
+    Controller -> CI : Display("후측방 위험 - 차일드락 해제 불가")
+    CI --> Controller : displayed
+else Normal Change
+    Controller -> CLS : setChildLockState(command)
+    CLS --> Controller : ACK
+    
+    Controller -> RDI : applyChildLockStateToAllDoors(newState)
+    RDI --> Controller : ACK
+    
+    Controller -> CI : Display("차일드락 : ON | OFF")
+    CI --> Controller : displayed
+end
+
+@enduml
