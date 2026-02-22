@@ -1,0 +1,62 @@
+@startuml
+title UC-2 : Inside Handle Open Request (Allow / Block) + Auto ChildLock Control (No L/R)
+
+actor "Rear Passenger" as RP
+actor "Vehicle Sensors" as VS
+
+boundary "Rear Door Interface" as RDI
+control  "ECLSController" as ECLS
+boundary "Vehicle State Interface" as VSI
+entity   "ChildLockState" as CLS
+boundary "Cluster Interface" as CI
+
+'========================
+' A) 상태 갱신 이벤트 (자동 제어)
+'========================
+== Rear Obstacle Approaching -> ChildLock ON (No L/R) ==
+VS  -> VSI : rearObstacleApproachDetected()
+VSI -> ECLS : notifyRearObstacleApproach()
+ECLS -> CLS : setChildLock(ON)
+ECLS -> RDI : displayChildLockState(ON)  '도어패널(Rear Door): ON/OFF만 표시
+
+== Airbag Deployed -> ChildLock OFF + Emergency ==
+VS  -> VSI : airbagDeployed()
+VSI -> ECLS : notifyAirbagDeployed()
+ECLS -> CLS : setEmergency(TRUE)
+ECLS -> CLS : setChildLock(OFF)          '에어백 전개 시 차일드락 해제
+ECLS -> RDI : displayChildLockState(OFF) '도어패널: ON/OFF만 표시
+ECLS -> CI  : displayEmergency(ON)       '클러스터: Emergency 표시
+
+'========================
+' B) 내부 손잡이 개방 요청 처리
+'========================
+== Inside Handle Open Request (Allow / Block) ==
+RP  -> RDI : pullInsideHandle()
+RDI -> ECLS : openRequest()
+
+ECLS -> CLS : getEmergency()
+CLS --> ECLS : emergency(TRUE/FALSE)
+
+alt emergency == TRUE
+    note right of ECLS
+      Emergency 상태(예: 에어백 전개)에서는
+      구조/탈출 지원을 위해 차일드락을 무시하고 개방을 허용한다.
+    end note
+    ECLS -> RDI : allowOpen()
+    RDI --> ECLS : allowed
+    ECLS -> CI  : displayEmergency(ON)
+else emergency == FALSE
+    ECLS -> CLS : getChildLock()
+    CLS --> ECLS : childLock(ON/OFF)
+
+    alt childLock == ON
+        ECLS -> RDI : blockOpen()
+        RDI --> ECLS : blocked
+        ECLS -> RDI : displayChildLockState(ON)
+    else childLock == OFF
+        ECLS -> RDI : allowOpen()
+        RDI --> ECLS : allowed
+        ECLS -> RDI : displayChildLockState(OFF)
+    end
+end
+@enduml
