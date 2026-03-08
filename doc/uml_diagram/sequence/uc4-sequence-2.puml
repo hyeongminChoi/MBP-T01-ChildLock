@@ -1,0 +1,26 @@
+@startuml
+title UC-4 E1 Cluster / HMI 표시 실패
+
+actor Driver
+control "ChildLockController" as CLC
+boundary "Cluster / HMI Interface" as HMI
+database "Diagnostic Log" as LOG
+
+CLC -> HMI : displayInterventionMessage(message)
+activate HMI
+
+alt 표시 실패 응답 수신
+    HMI --> CLC : displayFailed
+else 응답 없음
+    CLC -> CLC : timeoutDetected()
+end
+
+deactivate HMI
+
+note right of CLC
+  차일드락 제어 기능은
+  정상적으로 유지됨
+end note
+
+CLC -> LOG : writeDisplayFailureLog()
+@enduml
