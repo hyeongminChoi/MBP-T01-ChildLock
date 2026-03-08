@@ -1,0 +1,26 @@
+@startuml
+title UC-4 시스템 개입 상황 알림 제공
+
+actor Driver
+control "ChildLockController" as CLC
+boundary "Cluster / HMI Interface" as HMI
+
+alt 상태 변경 거부
+    CLC -> HMI : displayWarning("Unlock denied")
+    activate HMI
+    HMI --> CLC : warningDisplayed
+    deactivate HMI
+
+else 비상 자동 해제
+    CLC -> HMI : displayInfo("Child lock released automatically")
+    activate HMI
+    HMI --> CLC : infoDisplayed
+    deactivate HMI
+
+else 시스템 오류
+    CLC -> HMI : displayFault("Child lock fault")
+    activate HMI
+    HMI --> CLC : faultDisplayed
+    deactivate HMI
+end
+@enduml
