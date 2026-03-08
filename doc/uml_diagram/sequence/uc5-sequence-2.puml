@@ -1,0 +1,33 @@
+@startuml
+title UC-5 E1 RCTA 상태 정보 수신 불가
+
+control "ChildLockController" as CLC
+control "ChildLockValidator" as CLV
+actor "Vehicle State System" as VSS
+actor "RCTA System" as RCTA
+
+CLC -> CLV : validateUnlock()
+activate CLV
+
+CLV -> VSS : requestVehicleSpeed()
+activate VSS
+VSS --> CLV : vehicleSpeed
+deactivate VSS
+
+CLV -> RCTA : requestRearSideRisk()
+activate RCTA
+
+alt 통신 오류 응답 수신
+    RCTA --> CLV : communicationError
+else 응답 없음
+    CLV -> CLV : timeoutDetected()
+end
+
+deactivate RCTA
+
+CLV -> CLV : applyFailSafe()
+CLV -> CLV : keepChildLockON()
+CLV --> CLC : unlockDenied
+
+deactivate CLV
+@enduml
