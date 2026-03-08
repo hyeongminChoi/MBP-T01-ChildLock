@@ -1,0 +1,40 @@
+@startuml
+title UC-3 E1 Door Panel LED 표시 실패
+
+actor Driver
+actor "Cluster / HMI System" as HMI
+control "ChildLockController" as CLC
+entity "ChildLockState" as CLS
+boundary "Door Panel Interface" as DPI
+database "Diagnostic Log" as LOG
+
+CLC -> CLS : getState()
+activate CLS
+CLS --> CLC : childLockState
+deactivate CLS
+
+alt 차일드락 ON 상태
+    CLC -> DPI : turnOnLED()
+    activate DPI
+else 차일드락 OFF 상태
+    CLC -> DPI : turnOffLED()
+    activate DPI
+end
+
+alt 표시 실패 응답 수신
+    DPI --> CLC : displayFailed
+else 응답 없음
+    CLC -> CLC : timeoutDetected()
+end
+
+deactivate DPI
+
+ref over CLC, HMI
+  UC-4 시스템 개입 상황 알림 제공
+  - Door Panel 표시 오류
+  - 현재 차일드락 상태 표시
+  - 운전자 확인 요청
+end ref
+
+CLC -> LOG : writeDisplayFailureLog()
+@enduml
