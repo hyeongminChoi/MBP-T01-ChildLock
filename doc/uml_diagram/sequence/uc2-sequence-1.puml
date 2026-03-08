@@ -1,0 +1,53 @@
+@startuml
+title UC-2 비상 상황 자동 해제
+
+actor "Crash Detection System / Airbag Control Unit" as CDS
+actor "Cluster / HMI System" as HMI
+boundary "Crash Signal Interface" as CSI
+control "ChildLockController" as CLC
+entity "ChildLockState" as CLS
+boundary "Rear Door Module Interface" as RDMI
+boundary "Door Panel Interface" as DPI
+
+CDS -> CSI : crashDetected()
+activate CSI
+
+CSI -> CLC : emergencyUnlockRequest()
+activate CLC
+
+CLC -> CLS : getState()
+activate CLS
+CLS --> CLC : childLockState
+deactivate CLS
+
+alt 차일드락 ON 상태
+
+    CLC -> RDMI : applyChildLockState(OFF)
+    activate RDMI
+    RDMI --> CLC : stateApplied
+    deactivate RDMI
+
+    CLC -> CLS : setState(OFF)
+    activate CLS
+    CLS --> CLC : stateUpdated
+    deactivate CLS
+
+    ref over CLC, DPI
+      UC-3 차일드락 상태 표시 제공
+    end ref
+
+    ref over CLC, HMI
+      UC-4 시스템 개입 상황 알림 제공
+    end ref
+
+else 차일드락 이미 OFF
+
+    note right of CLC
+      상태 변경 없음
+    end note
+
+end
+
+deactivate CLC
+deactivate CSI
+@enduml
