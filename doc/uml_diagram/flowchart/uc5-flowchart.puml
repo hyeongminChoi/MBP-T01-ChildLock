@@ -1,0 +1,38 @@
+@startuml
+title UC-5 Child Lock Unlock Condition Validation Flowchart
+
+start
+
+:validateUnlockRequest()\n해제 조건 검증 요청 수신;
+:requestVehicleSpeed()\n차량 속도 정보 요청;
+
+if (vehicleSpeed 수신 성공?) then (Yes)
+  :requestRearSideRisk()\n후측방 위험 감지 상태 요청;
+
+  if (rearSideRisk 수신 성공?) then (Yes)
+    :determineUnlockCondition()\n해제 가능 여부 판단;
+
+    if (speed <= 3 km/h\nand rearSideRisk == FALSE?) then (Yes)
+      :unlockAllowed\n해제 가능 판단;
+    else (No)
+      :unlockDenied\n해제 불가 판단;
+    endif
+
+  else (No)
+    :handleCommunicationFailure()\nRCTA 정보 수신 실패 처리;
+    :applyFailSafe()\nFail-safe 적용;
+    :keepChildLockON()\n차일드락 상태 유지;
+    :unlockDenied\n해제 불가 판단;
+  endif
+
+else (No)
+  :handleCommunicationFailure()\n차량 속도 정보 수신 실패 처리;
+  :applyFailSafe()\nFail-safe 적용;
+  :keepChildLockON()\n차일드락 상태 유지;
+  :unlockDenied\n해제 불가 판단;
+endif
+
+:returnUnlockResult()\n결과 반환;
+
+stop
+@enduml
