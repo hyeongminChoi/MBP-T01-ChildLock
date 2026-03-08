@@ -1,0 +1,49 @@
+@startuml
+title UC-1 E1 Rear Door Module 반영 실패
+
+actor Driver
+actor "Cluster / HMI System" as HMI
+boundary "Door Panel Interface" as DPI
+control "ChildLockController" as CLC
+entity "ChildLockState" as CLS
+boundary "Rear Door Module Interface" as RDMI
+database "Diagnostic Log" as LOG
+
+Driver -> DPI : pressChildLockButton()
+activate DPI
+
+DPI -> CLC : sendButtonEvent()
+activate CLC
+
+CLC -> CLS : getState()
+activate CLS
+CLS --> CLC : currentState
+deactivate CLS
+
+CLC -> CLC : determineNewState()
+
+CLC -> RDMI : applyChildLockState(targetState)
+activate RDMI
+
+alt 반영 실패 응답 수신
+    RDMI --> CLC : applyFailed
+else ACK 미수신
+    CLC -> CLC : timeoutDetected()
+end
+
+deactivate RDMI
+
+CLC -> CLC : maintainCurrentState()
+
+ref over CLC, HMI
+  UC-4 반영 실패 알림 제공
+  - 차일드락 상태 변경 실패
+  - 기존 상태 유지
+  - 운전자 확인 요청
+end ref
+
+CLC -> LOG : writeFailureLog()
+
+deactivate CLC
+deactivate DPI
+@enduml
