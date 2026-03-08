@@ -1,0 +1,29 @@
+@startuml
+title UC-5 차일드락 해제 조건 검증
+
+control "ChildLockController" as CLC
+control "ChildLockValidator" as CLV
+actor "Vehicle State System" as VSS
+actor "RCTA System" as RCTA
+
+CLC -> CLV : validateUnlock()
+activate CLV
+
+CLV -> VSS : requestVehicleSpeed()
+activate VSS
+VSS --> CLV : vehicleSpeed
+deactivate VSS
+
+CLV -> RCTA : requestRearSideRisk()
+activate RCTA
+RCTA --> CLV : rearSideRisk
+deactivate RCTA
+
+alt 해제 가능 (speed <= 3 && rearSideRisk == FALSE)
+    CLV --> CLC : unlockAllowed
+else 해제 불가 (speed > 3 또는 rearSideRisk == TRUE)
+    CLV --> CLC : unlockDenied
+end
+
+deactivate CLV
+@enduml
