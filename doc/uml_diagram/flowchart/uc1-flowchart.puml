@@ -1,0 +1,54 @@
+@startuml
+title UC-1 Child Lock State Change Flowchart
+
+start
+
+:receiveChildLockToggleRequest()
+차일드락 상태 변경 요청 수신;
+
+:getCurrentChildLockState()
+현재 차일드락 상태 조회;
+
+:determineChildLockAction()
+상태 변경 방향 결정;
+
+if (targetAction == LOCK?) then (Yes)
+  :setChildLockOn()
+  차일드락 설정 처리;
+else (No)
+  :validateChildLockReleaseCondition()
+  차일드락 해제 조건 검증 수행;
+
+  if (releaseAllowed?) then (Yes)
+    :setChildLockOff()
+    차일드락 해제 처리;
+  else (No)
+    :keepCurrentChildLockState()
+    차일드락 상태 유지 처리;
+
+    :requestUnlockRejectedNotification()
+    해제 불가 알림 요청;
+    stop
+  endif
+endif
+
+:applyChildLockStateToRearDoorModule()
+Rear Door Module 상태 반영;
+
+:checkRearDoorModuleAck()
+반영 결과 확인;
+
+if (applySuccess?) then (Yes)
+  :saveChildLockState()
+  차일드락 상태 저장;
+
+  :requestChildLockLedStatusDisplay()
+  도어패널 LED 상태 표시 요청;
+  stop
+else (No)
+  :handleRearDoorApplyFailure()
+  반영 실패 예외 처리;
+  stop
+endif
+
+@enduml
