@@ -1,0 +1,26 @@
+@startuml
+title UC-3 Child Lock Status Display Flowchart
+
+start
+
+:receiveChildLockStatusDisplayRequest()
+상태 표시 요청 수신;
+
+:determineLedCommand()
+LED 제어 명령 결정;
+
+:sendLedCommandToDoorPanel()
+LED 제어 명령 송신;
+
+:checkDoorPanelLedAck()
+표시 반영 결과 확인;
+
+if (displaySuccess?) then (Yes)
+  stop
+else (No)
+  :handleLedDisplayFailure()
+  표시 실패 예외 처리;
+  stop
+endif
+
+@enduml
