@@ -1,0 +1,78 @@
+@startuml
+title UC-1 차일드락 상태 변경
+
+actor Driver
+actor "Cluster / HMI System" as HMI
+boundary "Door Panel Interface" as DPI
+control "ChildLockController" as CLC
+control "ChildLockValidator" as CLV
+entity "ChildLockState" as CLS
+boundary "Rear Door Module Interface" as RDMI
+
+Driver -> DPI : pressChildLockButton()
+activate DPI
+
+DPI -> CLC : sendButtonEvent()
+activate CLC
+
+CLC -> CLS : getState()
+activate CLS
+CLS --> CLC : currentState
+deactivate CLS
+
+alt 잠금 설정 요청 (OFF -> ON)
+
+    CLC -> RDMI : applyChildLockState(ON)
+    activate RDMI
+    RDMI --> CLC : stateApplied
+    deactivate RDMI
+
+    CLC -> CLS : setState(ON)
+    activate CLS
+    CLS --> CLC : stateUpdated
+    deactivate CLS
+
+    ref over CLC, DPI
+      UC-3 차일드락 상태 표시 제공
+    end ref
+
+else 잠금 해제 요청 (ON -> OFF)
+
+    CLC -> CLV : validateUnlock()
+    activate CLV
+    CLV --> CLC : validationResult
+    deactivate CLV
+
+    alt 해제 가능
+
+        CLC -> RDMI : applyChildLockState(OFF)
+        activate RDMI
+        RDMI --> CLC : stateApplied
+        deactivate RDMI
+
+        CLC -> CLS : setState(OFF)
+        activate CLS
+        CLS --> CLC : stateUpdated
+        deactivate CLS
+
+        ref over CLC, DPI
+          UC-3 차일드락 상태 표시 제공
+        end ref
+
+    else 해제 불가
+
+        ref over CLC, DPI
+          UC-3 차일드락 상태 표시 제공
+        end ref
+
+        ref over CLC, HMI
+          UC-4 시스템 개입 상황 알림 제공
+        end ref
+
+    end
+end
+
+deactivate CLC
+deactivate DPI
+
+@enduml
