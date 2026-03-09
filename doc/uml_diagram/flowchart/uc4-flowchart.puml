@@ -1,0 +1,34 @@
+@startuml
+title UC-4 System Intervention Notification Flowchart
+
+start
+
+:receiveInterventionNotificationRequest()
+시스템 개입 알림 요청 수신;
+
+:determineNotificationType()
+알림 유형 결정;
+
+if (interventionType == UNLOCK_DENIED?) then (Yes)
+  :displayWarning()
+  경고 메시지 송신;
+else if (interventionType == EMERGENCY_AUTO_UNLOCK?) then (Yes)
+  :displayInfo()
+  안내 메시지 송신;
+else (SYSTEM_FAULT)
+  :displayFault()
+  오류 메시지 송신;
+endif
+
+:checkClusterHmiAck()
+표시 반영 결과 확인;
+
+if (displaySuccess?) then (Yes)
+  stop
+else (No)
+  :handleClusterDisplayFailure()
+  표시 실패 예외 처리;
+  stop
+endif
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+title UC-2 Emergency Auto Unlock Flowchart
+
+start
+
+:receiveEmergencyUnlockRequest()
+비상 해제 요청 수신;
+
+:getCurrentChildLockState()
+현재 차일드락 상태 조회;
+
+:determineEmergencyAction()
+상태 변경 여부 결정;
+
+if (currentState == ON?) then (Yes)
+  :setChildLockOff()
+  차일드락 강제 해제 처리;
+
+  :applyChildLockStateToRearDoorModule()
+  Rear Door Module 상태 반영;
+
+  :checkRearDoorModuleAck()
+  반영 결과 확인;
+
+  if (applySuccess?) then (Yes)
+    :saveChildLockState()
+    차일드락 상태 저장;
+
+    :requestChildLockLedStatusDisplay()
+    도어패널 LED 상태 표시 요청;
+
+    :requestEmergencyUnlockNotification()
+    비상 해제 알림 요청;
+    stop
+  else (No)
+    :handleRearDoorApplyFailure()
+    반영 실패 예외 처리;
+    stop
+  endif
+else (No)
+  stop
+endif
+
+@enduml
