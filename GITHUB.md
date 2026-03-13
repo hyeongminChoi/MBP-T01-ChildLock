@@ -53,15 +53,7 @@ Merge → main
 
 ### Issue Title 규칙
 
-Issue 제목에는 **type을 붙이지 않는다.**
-
-예
-
-```
-차일드락 해제 조건 검증 로직 구현
-```
-
-작업 유형은 **Label로 관리한다.**
+Issue Template을 이용하여 생성한다.
 
 ### Issue Template 예시
 
@@ -81,7 +73,7 @@ Task
 
 ```
 Title
-차일드락 해제 조건 검증 구현
+[Feature] 차일드락 해제 조건 검증 구현
 
 Description
 차량 속도와 후측방 위험 상태를 기반으로
