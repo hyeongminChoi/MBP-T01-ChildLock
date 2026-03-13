@@ -1,21 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c17 --coverage
-LDFLAGS = --coverage
+CFLAGS = -Wall -Wextra -std=c17
+TARGET = app
 
 SRC = $(wildcard src/*.c)
-OBJ = $(SRC:.c=.o)
-
-TARGET = app
 
 all: $(TARGET)
 
-$(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
-test:
-	./test/run_tests
+test: $(TARGET)
+	./$(TARGET)
 
 clean:
-	rm -f src/*.o $(TARGET)
-	find . -name "*.gcda" -delete
-	find . -name "*.gcno" -delete
+	rm -f $(TARGET)
