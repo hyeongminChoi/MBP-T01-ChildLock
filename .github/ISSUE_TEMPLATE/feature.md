@@ -1,7 +1,7 @@
 ---
 name: Feature
 about: 새로운 기능 개발 작업
-title: ''
+title: "[Feature]"
 labels: feature
 assignees: ''
 

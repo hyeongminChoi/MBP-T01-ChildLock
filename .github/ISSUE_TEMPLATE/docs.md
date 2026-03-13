@@ -1,7 +1,7 @@
 ---
 name: Docs
 about: 문서 작성 또는 수정 작업
-title: ''
+title: "[Docs]"
 labels: docs
 assignees: ''
 

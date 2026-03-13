@@ -1,7 +1,7 @@
 ---
 name: Refactor
 about: 코드 구조 개선 작업
-title: ''
+title: "[Refactor]"
 labels: refactor
 assignees: ''
 
