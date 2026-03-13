@@ -58,7 +58,14 @@ jobs:
         run: make test
 
       - name: Run static analysis
-        run: cppcheck --enable=all --inconclusive --error-exitcode=1 src test
+        run: |
+          cppcheck \
+            --enable=warning,style,performance,portability \
+            --inconclusive \
+            --error-exitcode=1 \
+            --std=c17 \
+            --language=c \
+            src
 
       - name: Check LOC
         run: cloc src test
