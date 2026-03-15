@@ -3,9 +3,7 @@
  * @brief UC-4 시스템 개입 상황 알림 제공 모듈
  * @details 차일드락 관련 시스템 개입 상황(해제 거부, 비상 자동 해제, 시스템 오류) 발생 시
  *          해당 정보를 Cluster/HMI에 전달하여 운전자에게 알린다.
- * @author harvy1070
- * @date 2026-03-15
- * @note AI 구현 도구: Claude (claude-sonnet-4-6) | 구현일: 2026-03-15
+ * @author sh.kwon
  * @note 기준 문서: SwRS_v2.md UC-4, SwDD UC-4, uc4-flowchart.puml
  */
 

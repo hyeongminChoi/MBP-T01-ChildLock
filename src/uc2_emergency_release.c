@@ -3,9 +3,7 @@
  * @brief UC-2 비상 상황 자동 해제 모듈
  * @details 차량 충돌 또는 에어백 전개 신호 수신 시 차일드락을 자동 해제한다.
  *          Primary Actor 없음. Crash/Airbag System이 트리거 역할을 수행한다.
- * @author harvy1070
- * @date 2026-03-15
- * @note AI 구현 도구: Claude (claude-sonnet-4-6) | 구현일: 2026-03-15
+ * @author sh.kwon
  * @note 기준 문서: SwRS_v2.md UC-2, SwDD UC-2, uc2-flowchart.puml
  */
 
