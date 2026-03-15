@@ -88,30 +88,22 @@ Uc3Status processChildLockStatusDisplayRequest(const Uc3Dependencies *dependenci
      * 4) Exception handling on failure.
      */
     Uc3Status status = UC3_STATUS_INVALID_ARGUMENT;
-    bool requestReceived = false;
-    LedCommand ledCommand = LED_COMMAND_OFF;
-    bool commandSent = false;
-    bool ackReceived = false;
-    bool displaySuccess = false;
-    bool checkDone = false;
-    bool failureHandled = false;
 
     if (dependencies != (const Uc3Dependencies *)0) {
         /* F1 */
-        requestReceived = receiveChildLockStatusDisplayRequest(displayState);
-        if (requestReceived) {
+        if (receiveChildLockStatusDisplayRequest(displayState)) {
             /* F2 + F3 */
-            ledCommand = determineLedCommand(displayState);
-            commandSent = sendLedCommandToDoorPanel(dependencies, ledCommand);
-            if (commandSent) {
+            LedCommand ledCommand = determineLedCommand(displayState);
+            if (sendLedCommandToDoorPanel(dependencies, ledCommand)) {
                 /* F4 */
-                checkDone = checkDoorPanelLedAck(dependencies, &ackReceived, &displaySuccess);
-                if (checkDone && ackReceived && displaySuccess) {
+                bool ackReceived = false;
+                bool displaySuccess = false;
+                if (checkDoorPanelLedAck(dependencies, &ackReceived, &displaySuccess) &&
+                    ackReceived && displaySuccess) {
                     status = UC3_STATUS_OK;
                 } else {
                     /* F5 */
-                    failureHandled = handleLedDisplayFailure(dependencies, displayState, ackReceived);
-                    if (failureHandled) {
+                    if (handleLedDisplayFailure(dependencies, displayState, ackReceived)) {
                         if (!ackReceived) {
                             status = UC3_STATUS_ACK_TIMEOUT;
                         } else {
