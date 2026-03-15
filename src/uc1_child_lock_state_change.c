@@ -165,6 +165,63 @@ ChildLockState handleRearDoorApplyFailure(
     return restoredState;
 }
 
+/*
+ * Resolve target child lock state from current state and validation result.
+ * Unlock rejection path keeps current state and requests UC-4 notification.
+ */
+static ChildLockState resolveTargetState(
+    const Uc1Dependencies *dependencies, ChildLockState previousState)
+{
+    ChildLockState targetState = previousState;
+
+    if (determineChildLockAction(previousState) == CHILD_LOCK_ACTION_LOCK) {
+        targetState = setChildLockOn();
+    } else {
+        if (validateChildLockReleaseCondition(dependencies)) {
+            targetState = setChildLockOff();
+        } else {
+            targetState = keepCurrentChildLockState(previousState);
+            (void)requestUnlockRejectedNotification(dependencies, previousState);
+        }
+    }
+
+    return targetState;
+}
+
+/*
+ * Apply target state to rear door module and commit final UC-1 status.
+ * Failure path restores previous state and maps error type.
+ */
+static Uc1Status commitTargetState(
+    ChildLockController *controller,
+    const Uc1Dependencies *dependencies,
+    ChildLockState previousState,
+    ChildLockState targetState)
+{
+    Uc1Status status = UC1_STATUS_APPLY_FAILURE;
+    bool ackReceived = false;
+    bool applySuccess = false;
+
+    if (applyChildLockStateToRearDoorModule(dependencies, targetState) &&
+        checkRearDoorModuleAck(dependencies, &ackReceived, &applySuccess) &&
+        ackReceived && applySuccess) {
+        (void)saveChildLockState(controller, targetState);
+        if (requestChildLockLedStatusDisplay(dependencies, targetState)) {
+            status = UC1_STATUS_OK;
+        } else {
+            status = UC1_STATUS_LED_DISPLAY_REQUEST_FAILED;
+        }
+    } else {
+        (void)handleRearDoorApplyFailure(previousState, ackReceived, (bool *)0);
+        (void)saveChildLockState(controller, previousState);
+        if (!ackReceived) {
+            status = UC1_STATUS_ACK_TIMEOUT;
+        }
+    }
+
+    return status;
+}
+
 Uc1Status processChildLockToggleRequest(
     ChildLockController *controller, const Uc1Dependencies *dependencies, bool toggleRequest)
 {
@@ -181,46 +238,8 @@ Uc1Status processChildLockToggleRequest(
         if (receiveChildLockToggleRequest(toggleRequest)) {
             /* F2 + F3 */
             ChildLockState previousState = getCurrentChildLockState(controller);
-            ChildLockState targetState;
-
-            if (determineChildLockAction(previousState) == CHILD_LOCK_ACTION_LOCK) {
-                /* F4 */
-                targetState = setChildLockOn();
-            } else {
-                /* F5 */
-                if (validateChildLockReleaseCondition(dependencies)) {
-                    /* F6 */
-                    targetState = setChildLockOff();
-                } else {
-                    /* F7 + F8 */
-                    targetState = keepCurrentChildLockState(previousState);
-                    (void)requestUnlockRejectedNotification(dependencies, previousState);
-                }
-            }
-
-            /* F9 + F10 */
-            bool ackReceived = false;
-            bool applySuccess = false;
-            if (applyChildLockStateToRearDoorModule(dependencies, targetState) &&
-                checkRearDoorModuleAck(dependencies, &ackReceived, &applySuccess) &&
-                ackReceived && applySuccess) {
-                /* F11 + F12 */
-                (void)saveChildLockState(controller, targetState);
-                if (requestChildLockLedStatusDisplay(dependencies, targetState)) {
-                    status = UC1_STATUS_OK;
-                } else {
-                    status = UC1_STATUS_LED_DISPLAY_REQUEST_FAILED;
-                }
-            } else {
-                /* F13 */
-                (void)handleRearDoorApplyFailure(previousState, ackReceived, (bool *)0);
-                (void)saveChildLockState(controller, previousState);
-                if (!ackReceived) {
-                    status = UC1_STATUS_ACK_TIMEOUT;
-                } else {
-                    status = UC1_STATUS_APPLY_FAILURE;
-                }
-            }
+            ChildLockState targetState = resolveTargetState(dependencies, previousState);
+            status = commitTargetState(controller, dependencies, previousState, targetState);
         } else {
             status = UC1_STATUS_NO_REQUEST;
         }
