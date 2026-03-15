@@ -20,6 +20,7 @@ jobs:
             gcc \
             g++ \
             make \
+            libgtest-dev \
             gcovr \
             cppcheck \
             cloc \
