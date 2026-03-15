@@ -1,0 +1,245 @@
+#include "uc1_child_lock_state_change.h"
+
+/*
+ * F1.
+ * Toggle request is currently represented by a boolean flag.
+ * False means no operation requested.
+ */
+bool receiveChildLockToggleRequest(bool toggleRequest)
+{
+    bool requestReceived = false;
+
+    if (toggleRequest) {
+        requestReceived = true;
+    }
+
+    return requestReceived;
+}
+
+ChildLockState getCurrentChildLockState(const ChildLockController *controller)
+{
+    /* F2: default OFF is fail-safe if controller is missing. */
+    ChildLockState currentState = CHILD_LOCK_STATE_OFF;
+
+    if (controller != (const ChildLockController *)0) {
+        currentState = controller->currentState;
+    }
+
+    return currentState;
+}
+
+ChildLockAction determineChildLockAction(ChildLockState currentState)
+{
+    /* F3: ON means unlock action, OFF means lock action. */
+    ChildLockAction targetAction = CHILD_LOCK_ACTION_LOCK;
+
+    if (currentState == CHILD_LOCK_STATE_ON) {
+        targetAction = CHILD_LOCK_ACTION_UNLOCK;
+    }
+
+    return targetAction;
+}
+
+ChildLockState setChildLockOn(void)
+{
+    /* F4 */
+    ChildLockState targetState = CHILD_LOCK_STATE_ON;
+    return targetState;
+}
+
+bool validateChildLockReleaseCondition(const Uc1Dependencies *dependencies)
+{
+    /* F5: delegated to UC-5 callback. */
+    bool releaseAllowed = false;
+
+    if ((dependencies != (const Uc1Dependencies *)0) &&
+        (dependencies->validateReleaseCondition != (void *)0)) {
+        releaseAllowed = dependencies->validateReleaseCondition(dependencies->context);
+    }
+
+    return releaseAllowed;
+}
+
+ChildLockState setChildLockOff(void)
+{
+    /* F6 */
+    ChildLockState targetState = CHILD_LOCK_STATE_OFF;
+    return targetState;
+}
+
+ChildLockState keepCurrentChildLockState(ChildLockState currentState)
+{
+    /* F7 */
+    ChildLockState targetState = currentState;
+    return targetState;
+}
+
+bool requestUnlockRejectedNotification(const Uc1Dependencies *dependencies, ChildLockState currentState)
+{
+    /* F8: delegated to UC-4 callback. */
+    bool notificationRequested = false;
+
+    if ((dependencies != (const Uc1Dependencies *)0) &&
+        (dependencies->requestUnlockRejectedNotification != (void *)0)) {
+        notificationRequested =
+            dependencies->requestUnlockRejectedNotification(currentState, dependencies->context);
+    }
+
+    return notificationRequested;
+}
+
+bool applyChildLockStateToRearDoorModule(const Uc1Dependencies *dependencies, ChildLockState targetState)
+{
+    /* F9 */
+    bool applyRequestSent = false;
+
+    if ((dependencies != (const Uc1Dependencies *)0) &&
+        (dependencies->applyStateToRearDoorModule != (void *)0)) {
+        applyRequestSent = dependencies->applyStateToRearDoorModule(targetState, dependencies->context);
+    }
+
+    return applyRequestSent;
+}
+
+bool checkRearDoorModuleAck(const Uc1Dependencies *dependencies, bool *ackReceived, bool *applySuccess)
+{
+    /* F10 */
+    bool checkSuccess = false;
+
+    if ((dependencies != (const Uc1Dependencies *)0) &&
+        (dependencies->checkRearDoorModuleAck != (void *)0) &&
+        (ackReceived != (bool *)0) &&
+        (applySuccess != (bool *)0)) {
+        checkSuccess = dependencies->checkRearDoorModuleAck(ackReceived, applySuccess, dependencies->context);
+    }
+
+    return checkSuccess;
+}
+
+bool saveChildLockState(ChildLockController *controller, ChildLockState finalState)
+{
+    /* F11 */
+    bool saveSuccess = false;
+
+    if (controller != (ChildLockController *)0) {
+        controller->currentState = finalState;
+        saveSuccess = true;
+    }
+
+    return saveSuccess;
+}
+
+bool requestChildLockLedStatusDisplay(const Uc1Dependencies *dependencies, ChildLockState finalState)
+{
+    /* F12: UC-3 callback hook. */
+    bool displayRequestSent = false;
+
+    if ((dependencies != (const Uc1Dependencies *)0) &&
+        (dependencies->requestChildLockLedStatusDisplay != (void *)0)) {
+        displayRequestSent =
+            dependencies->requestChildLockLedStatusDisplay(finalState, dependencies->context);
+    }
+
+    return displayRequestSent;
+}
+
+ChildLockState handleRearDoorApplyFailure(
+    ChildLockState previousState, bool ackReceived, bool *errorHandled)
+{
+    /*
+     * F13.
+     * In this phase, the fallback behavior is state retention.
+     * Detailed diagnostic routing can be added by UC-4/UC-5 extensions.
+     */
+    ChildLockState restoredState = previousState;
+    bool localHandled = true;
+
+    if (ackReceived) {
+        localHandled = true;
+    }
+
+    if (errorHandled != (bool *)0) {
+        *errorHandled = localHandled;
+    }
+
+    return restoredState;
+}
+
+/*
+ * Resolve target child lock state from current state and validation result.
+ * Unlock rejection path keeps current state and requests UC-4 notification.
+ */
+static ChildLockState resolveTargetState(
+    const Uc1Dependencies *dependencies, ChildLockState previousState)
+{
+    if (determineChildLockAction(previousState) == CHILD_LOCK_ACTION_LOCK) {
+        return setChildLockOn();
+    }
+
+    if (validateChildLockReleaseCondition(dependencies)) {
+        return setChildLockOff();
+    }
+
+    (void)requestUnlockRejectedNotification(dependencies, previousState);
+    return keepCurrentChildLockState(previousState);
+}
+
+/*
+ * Apply target state to rear door module and commit final UC-1 status.
+ * Failure path restores previous state and maps error type.
+ */
+static Uc1Status commitTargetState(
+    ChildLockController *controller,
+    const Uc1Dependencies *dependencies,
+    ChildLockState previousState,
+    ChildLockState targetState)
+{
+    Uc1Status status = UC1_STATUS_APPLY_FAILURE;
+    bool ackReceived = false;
+    bool applySuccess = false;
+
+    if (applyChildLockStateToRearDoorModule(dependencies, targetState) &&
+        checkRearDoorModuleAck(dependencies, &ackReceived, &applySuccess) &&
+        ackReceived && applySuccess) {
+        (void)saveChildLockState(controller, targetState);
+        if (requestChildLockLedStatusDisplay(dependencies, targetState)) {
+            status = UC1_STATUS_OK;
+        } else {
+            status = UC1_STATUS_LED_DISPLAY_REQUEST_FAILED;
+        }
+    } else {
+        (void)handleRearDoorApplyFailure(previousState, ackReceived, (bool *)0);
+        (void)saveChildLockState(controller, previousState);
+        if (!ackReceived) {
+            status = UC1_STATUS_ACK_TIMEOUT;
+        }
+    }
+
+    return status;
+}
+
+Uc1Status processChildLockToggleRequest(
+    ChildLockController *controller, const Uc1Dependencies *dependencies, bool toggleRequest)
+{
+    /*
+     * UC-1 flow orchestration.
+     * OFF->ON directly.
+     * ON->OFF requires validator callback.
+     * Rear door confirmation is mandatory before state commit.
+     */
+    Uc1Status status = UC1_STATUS_INVALID_ARGUMENT;
+
+    if ((controller != (ChildLockController *)0) && (dependencies != (const Uc1Dependencies *)0)) {
+        /* F1 */
+        if (receiveChildLockToggleRequest(toggleRequest)) {
+            /* F2 + F3 */
+            ChildLockState previousState = getCurrentChildLockState(controller);
+            ChildLockState targetState = resolveTargetState(dependencies, previousState);
+            status = commitTargetState(controller, dependencies, previousState, targetState);
+        } else {
+            status = UC1_STATUS_NO_REQUEST;
+        }
+    }
+
+    return status;
+}
