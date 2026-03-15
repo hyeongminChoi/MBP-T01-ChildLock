@@ -172,20 +172,16 @@ ChildLockState handleRearDoorApplyFailure(
 static ChildLockState resolveTargetState(
     const Uc1Dependencies *dependencies, ChildLockState previousState)
 {
-    ChildLockState targetState = previousState;
-
     if (determineChildLockAction(previousState) == CHILD_LOCK_ACTION_LOCK) {
-        targetState = setChildLockOn();
-    } else {
-        if (validateChildLockReleaseCondition(dependencies)) {
-            targetState = setChildLockOff();
-        } else {
-            targetState = keepCurrentChildLockState(previousState);
-            (void)requestUnlockRejectedNotification(dependencies, previousState);
-        }
+        return setChildLockOn();
     }
 
-    return targetState;
+    if (validateChildLockReleaseCondition(dependencies)) {
+        return setChildLockOff();
+    }
+
+    (void)requestUnlockRejectedNotification(dependencies, previousState);
+    return keepCurrentChildLockState(previousState);
 }
 
 /*
