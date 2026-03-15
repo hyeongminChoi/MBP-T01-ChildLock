@@ -181,7 +181,7 @@ Uc1Status processChildLockToggleRequest(
         if (receiveChildLockToggleRequest(toggleRequest)) {
             /* F2 + F3 */
             ChildLockState previousState = getCurrentChildLockState(controller);
-            ChildLockState targetState = previousState;
+            ChildLockState targetState;
 
             if (determineChildLockAction(previousState) == CHILD_LOCK_ACTION_LOCK) {
                 /* F4 */
